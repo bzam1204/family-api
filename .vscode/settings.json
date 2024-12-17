@@ -1,0 +1,8 @@
+{
+    "cSpell.words": [
+        "datasource",
+        "postgresql",
+        "uuid"
+    ],
+    "prisma.fileWatcher": false
+}

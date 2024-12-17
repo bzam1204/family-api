@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum FamilyUserRole {
+  HEAD
+  ADMIN
+  MEMBER
+}
+
+model User {
+  id              String       @id @default(uuid()) @db.Uuid
+  name            String
+  email           String       @unique
+  password        String
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  user            FamilyUser[]
+  createdFamilies Family[]
+}
+
+model Family {
+  id                           String                         @id @default(uuid()) @db.Uuid
+  name                         String
+  creatorUserId                String                         @db.Uuid
+  createdAt                    DateTime                       @default(now())
+  updatedAt                    DateTime                       @updatedAt
+  families                     FamilyUser[]
+  InventoryItem                InventoryItem[]
+  InventoryItemModificationLog InventoryItemModificationLog[]
+  user                         User                           @relation(fields: [creatorUserId], references: [id])
+}
+
+model FamilyUser {
+  id       String         @id @default(uuid()) @db.Uuid
+  userId   String         @db.Uuid
+  familyId String         @db.Uuid
+  role     FamilyUserRole @default(MEMBER)
+  joinedAt DateTime       @default(now())
+  user     User           @relation(fields: [userId], references: [id])
+  family   Family         @relation(fields: [familyId], references: [id])
+
+  @@unique([familyId, userId]) // Ensure a unique combination of family and user
+}
+
+model InventoryItem {
+  id            String                         @id @default(uuid()) @db.Uuid
+  familyId      String                         @db.Uuid
+  name          String
+  description   String
+  mediaPrice    Decimal
+  createdAt     DateTime                       @default(now())
+  updatedAt     DateTime                       @updatedAt
+  modifications InventoryItemModificationLog[]
+  family        Family                         @relation(fields: [familyId], references: [id])
+
+  @@unique([id, familyId])
+}
+
+model InventoryItemModificationLog {
+  id            String        @id @default(uuid()) @db.Uuid
+  itemId        String        @db.Uuid
+  familyId      String        @db.Uuid
+  change        Int
+  currentPrice  Decimal?
+  changedAt     DateTime      @default(now())
+  InventoryItem InventoryItem @relation(fields: [itemId], references: [id])
+  Family        Family        @relation(fields: [familyId], references: [id])
+}
