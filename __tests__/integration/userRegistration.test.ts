@@ -1,14 +1,12 @@
-import { v4 as uuidv4 } from "uuid";
-
 import request from "supertest";
 
 import app from "../../src/app";
 
+import {generateUniqueEmail} from "../../src/utils/generateUniqueEmail";
+
 import { CreateUserDTO } from "../../src/dto/CreateUserDto";
 
-function generateUniqueEmail() {
-    return `user_${uuidv4()}@example.com`;
-}
+
 
 describe("User Registration", () => {
     it("Should register a user.", async () => {

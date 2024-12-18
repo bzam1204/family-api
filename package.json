@@ -5,7 +5,7 @@
     "scripts": {
         "dev": "npx tsx watch ./src/server.ts",
         "seed": "tsx prisma/seed.ts",
-        "test": "jest",
+        "test": "jest --verbose",
         "build": "tsc",
         "debug-attached": "npx tsx watch --inspect-brk ./src/server.ts"
     },

@@ -25,7 +25,7 @@ export class FamilyController implements IFamilyController {
 
             const familyData = new CreateFamilyDTO(name, userId);
 
-            res.send(await this.familyService.create(familyData));
+            res.status(201).send(await this.familyService.create(familyData));
         } catch (error) {
             res.status(400).json({ error: (error as Error).message });
         }
@@ -33,11 +33,11 @@ export class FamilyController implements IFamilyController {
 
     public addMemberHandler = async (req: Request, res: Response) => {
         try {
-            const { role, userId, familyId } = req.body;
+            const { role, email, familyId } = req.body;
 
             const memberData = new CreateFamilyMemberDTO(
                 role,
-                userId,
+                email,
                 familyId
             );
 
