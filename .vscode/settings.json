@@ -2,7 +2,9 @@
     "cSpell.words": [
         "datasource",
         "postgresql",
-        "uuid"
+        "uuid",
+        "uuidv",
+        "valids"
     ],
     "prisma.fileWatcher": false
 }

@@ -11,11 +11,5 @@ export class FamilyValidator extends Validator {
                 "Name must be less than or equal to 200 characters long",
             "string.required": "Name is required",
         }),
-        userId: Joi.string()
-            .required()
-            .messages({
-                "string.empty": "UserId cannot be empty",
-                "string.required": "UserId is required",
-            }),
     });
 }

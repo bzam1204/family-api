@@ -1,20 +1,31 @@
-import { Family, PrismaClient, User } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
+
 import { IUserRepository } from "../interfaces/repositories/IUserRepository";
-import { UserRegisterDTO } from "../dto/UserRegisterDTO";
+
+import { CreateUserDTO } from "../dto/CreateUserDto";
 
 export class UserRepository implements IUserRepository {
-    private db: PrismaClient;
+    private readonly db: PrismaClient;
 
     constructor(db: PrismaClient) {
         this.db = db;
     }
 
-    create = async ({name, email, password}: UserRegisterDTO): Promise<User> => {
-        return await this.db.user.create({
+    get = async (id: string) =>
+        await this.db.user.findUnique({ where: { id } });
+
+    getByEmail = async (email: string) =>
+        await this.db.user.findFirst({ where: { email } });
+
+    create = async (
+        { name, email, password }: CreateUserDTO,
+        prismaTransaction: PrismaClient
+    ): Promise<User> => {
+        return await (prismaTransaction ?? this.db).user.create({
             data: {
                 name,
                 email,
-                password
+                password,
             },
         });
     };

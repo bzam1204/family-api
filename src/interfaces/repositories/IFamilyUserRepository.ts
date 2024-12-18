@@ -1,10 +1,13 @@
 import { FamilyUser } from "@prisma/client";
-import { FamilyUserRole } from "../../enums/FamilyUserRole";
+
+import { PrismaTransaction } from "../../utils/types/PrismaTransaction";
+
+import { CreateFamilyUserDTO } from "../../dto/CreateFamilyUserDTO";
 
 export interface IFamilyUserRepository {
+    get(userId: string, familyId: string): Promise<FamilyUser | null>;
     create(
-        role: FamilyUserRole,
-        userId: string,
-        familyId: string
-    ): Promise<FamilyUser>;
+        familyUserData: CreateFamilyUserDTO,
+        prismaTransaction?: PrismaTransaction
+    ): Promise<void>;
 }

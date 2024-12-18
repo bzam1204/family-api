@@ -7,11 +7,10 @@ import { FamilyValidator } from "../utils/validators/FamilyValidator";
 import { RequestValidatorService } from "../services/RequestValidatorService";
 
 export class FamilyCreationMiddleware implements IMiddleware {
-    private validator: FamilyValidator;
-    private requestValidatorService: RequestValidatorService;
+    private readonly validator = new FamilyValidator();
+    private readonly requestValidatorService: RequestValidatorService;
 
     constructor(requestValidatorService: RequestValidatorService) {
-        this.validator = new FamilyValidator();
         this.requestValidatorService = requestValidatorService;
     }
 

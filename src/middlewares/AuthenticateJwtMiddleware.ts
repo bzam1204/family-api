@@ -1,20 +1,26 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 
 import createHttpError from "http-errors";
 
 import { JwtService } from "../services/JwtService";
 
+import { CustomRequest } from "../utils/types/CustomRequest";
+
 export class AuthenticateJwtMiddleware {
-    private jwtService: JwtService;
+    private readonly jwtService: JwtService;
 
     constructor(jwtService: JwtService) {
         this.jwtService = jwtService;
     }
 
-    handler(req: Request, res: Response, next: NextFunction) {
+    handler(
+        req: CustomRequest & { user?: { id?: string } },
+        res: Response,
+        next: NextFunction
+    ) {
         const authHeader = req.headers.authorization;
 
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        if (!authHeader?.startsWith("Bearer ")) {
             return next(
                 createHttpError(401, {
                     message: "Access token is missing or invalid",
@@ -26,9 +32,9 @@ export class AuthenticateJwtMiddleware {
 
         try {
             const decoded = this.jwtService.verify(token);
-            
+
             if (typeof decoded !== "string" && decoded.userId) {
-                req.body.userId = decoded.userId;
+                req.user = { id: decoded.userId };
                 next();
             } else {
                 res.status(401).json({ message: "Invalid token payload" });
