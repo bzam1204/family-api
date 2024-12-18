@@ -75,6 +75,6 @@ model InventoryItemModificationLog {
   change        Int
   currentPrice  Decimal?
   changedAt     DateTime      @default(now())
-  InventoryItem InventoryItem @relation(fields: [itemId], references: [id])
   Family        Family        @relation(fields: [familyId], references: [id])
+  InventoryItem InventoryItem @relation(fields: [itemId], references: [id])
 }

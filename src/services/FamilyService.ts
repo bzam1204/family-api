@@ -1,17 +1,22 @@
 import { Family } from ".prisma/client";
 
 import { IFamilyService } from "../interfaces/services/IFamilyService";
-import { IFamilyRepository } from "../interfaces/repositories/IFamilyRepository";
+
+import { IFamilyManagementFacade } from "../interfaces/facades/IFamilyManagementFacade";
+
+import { CreateFamilyDTO } from "../dto/CreateFamilyDTO";
+import { CreateFamilyMemberDTO } from "../dto/CreateFamilyMemberDTO";
 
 export class FamilyService implements IFamilyService {
-    private familyRepository: IFamilyRepository;
+    private readonly familyManagementFacade: IFamilyManagementFacade;
 
-    constructor(
-        familyRepository: IFamilyRepository,
-    ) {
-        this.familyRepository = familyRepository;
+    constructor(familyManagementFacade: IFamilyManagementFacade) {
+        this.familyManagementFacade = familyManagementFacade;
     }
 
-    create = async (name: string, userId: string): Promise<Family> =>
-        await this.familyRepository.createWithUserFamily(name, userId);
+    create = async (familyData: CreateFamilyDTO): Promise<Family> =>
+        await this.familyManagementFacade.create(familyData);
+
+    addMember = async (memberData: CreateFamilyMemberDTO): Promise<void> =>
+        await this.familyManagementFacade.addMember(memberData);
 }

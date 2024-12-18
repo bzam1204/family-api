@@ -3,10 +3,10 @@ import { Request, Response } from "express";
 import { IAuthService } from "../interfaces/services/IAuthService";
 import { IAuthController } from "../interfaces/controllers/IAuthController";
 
-import { UserRegisterDTO } from "../dto/UserRegisterDTO";
+import { CreateUserDTO } from "../dto/CreateUserDto";
 
 export class AuthController implements IAuthController {
-    private authService: IAuthService;
+    private readonly authService: IAuthService;
 
     constructor(authService: IAuthService) {
         this.authService = authService;
@@ -24,7 +24,7 @@ export class AuthController implements IAuthController {
 
     public registerHandler = async (req: Request, res: Response) => {
         try {
-            const userRegisterData: UserRegisterDTO = req.body;
+            const userRegisterData: CreateUserDTO = req.body;
 
             res.status(201).json(
                 await this.authService.register(userRegisterData)

@@ -3,16 +3,16 @@ import { PrismaClient, User } from "../../node_modules/.prisma/client/index";
 import { IJwtService } from "../interfaces/services/IJwtService";
 import { IAuthService } from "../interfaces/services/IAuthService";
 
-import { UserRegisterDTO } from "../dto/UserRegisterDTO";
+import { CreateUserDTO } from "../dto/CreateUserDto";
 import { IEncryptService } from "../interfaces/services/IEncryptService";
 import { IUserRepository } from "../interfaces/repositories/IUserRepository";
 
 const prisma = new PrismaClient();
 
 export class AuthService implements IAuthService {
-    private jwtService: IJwtService;
-    private encryptService: IEncryptService;
-    private userRepository: IUserRepository;
+    private readonly jwtService: IJwtService;
+    private readonly encryptService: IEncryptService;
+    private readonly userRepository: IUserRepository;
 
     constructor(
         jwtService: IJwtService,
@@ -39,17 +39,15 @@ export class AuthService implements IAuthService {
         return this.jwtService.sign({ userId: user.id }, { expiresIn: "1h" });
     };
 
-    public register = async ({
-        name,
-        email,
-        password,
-    }: UserRegisterDTO): Promise<User> => {
-        const user = await prisma.user.findUnique({ where: { email } });
+    public register = async (user: CreateUserDTO): Promise<User> => {
+        const userExists = !!(await prisma.user.findFirst({
+            where: { email: user.email },
+        }));
 
-        if (user) throw new Error("User already exists");
+        if (userExists) throw new Error("User already exists");
 
-        const hashedPassword = await this.encryptService.hash(password, 10);
+        user.password = await this.encryptService.hash(user.password, 10);
 
-        return await this.userRepository.create({name, email, password: hashedPassword});
+        return await this.userRepository.create(user);
     };
 }
